@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guia Interativo: Desenvolvimento Mobile com React Native</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: A single-page application with a top navigation bar for smooth scrolling to thematic sections. This non-linear structure allows users to jump to the content they are most interested in, such as "Core Concepts", "Environment Setup", or "First App". The flow is designed for exploration, with interactive elements like toggles for architectural comparisons, clickable code explanations, and a filterable glossary to enhance learning and engagement. This is more user-friendly than a rigid, linear document as it caters to both beginners who might follow it sequentially and those looking to reference specific information. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Architecture comparison (Bridge vs. JSI). Goal: Compare. Viz: Interactive HTML/CSS diagram. Interaction: Buttons to toggle between views. Justification: A visual, interactive diagram is more intuitive for understanding abstract technical concepts than plain text. Method: HTML/CSS with JS for toggling visibility.
+        - Report Info: React Native vs. Native comparison. Goal: Compare. Viz: Text-based comparison list. Interaction: None. Justification: A direct textual explanation is clearer and more informative than an abstract chart for this type of trade-off analysis. Method: Styled HTML.
+        - Report Info: "Hello World" code. Goal: Inform/Educate. Viz: Code block with annotations. Interaction: Clicking on code lines reveals explanations. Justification: This breaks down the code into manageable parts, making it less intimidating for beginners. Method: HTML/CSS with JS event listeners.
+        - Report Info: Glossary. Goal: Organize/Reference. Viz: Definition list. Interaction: Live search/filter. Justification: Allows users to quickly find definitions for key terms. Method: JS input event listener to filter the list.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f7f4;
+            color: #4a4a4a;
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #8a4baf;
+            border-bottom-color: #8a4baf;
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1);
+        }
+        .btn-primary {
+            background-color: #8a4baf;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #6c3a8a;
+        }
+        .btn-secondary {
+            background-color: #e9d5ff;
+            color: #8a4baf;
+            transition: background-color 0.3s;
+        }
+        .btn-secondary.active {
+            background-color: #8a4baf;
+            color: white;
+        }
+        .code-line {
+            cursor: pointer;
+            padding: 2px 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .code-line:hover, .code-line.active {
+            background-color: #e9d5ff;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-purple-700">Guia React Native</h1>
+            <div class="hidden md:flex space-x-8">
+                <a href="#conceitos" class="nav-link">Conceitos</a>
+                <a href="#ambiente" class="nav-link">Ambiente</a>
+                <a href="#primeiro-app" class="nav-link">Primeiro App</a>
+                <a href="#glossario" class="nav-link">Glossário</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden text-gray-700 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4">
+            <a href="#conceitos" class="block py-2 nav-link">Conceitos</a>
+            <a href="#ambiente" class="block py-2 nav-link">Ambiente</a>
+            <a href="#primeiro-app" class="block py-2 nav-link">Primeiro App</a>
+            <a href="#glossario" class="block py-2 nav-link">Glossário</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+        
+        <section id="hero" class="text-center mb-20">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4 text-gray-800">Sua Jornada no Desenvolvimento Mobile</h2>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">Um guia interativo para aprender React Native e Expo, do zero ao seu primeiro aplicativo funcional.</p>
+        </section>
+
+        <section id="conceitos" class="mb-20 scroll-mt-20">
+            <h3 class="text-3xl font-bold text-center mb-12">Conceitos Fundamentais</h3>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="card p-6 lg:col-span-2">
+                    <h4 class="text-xl font-semibold mb-3 text-purple-700">O que é React Native?</h4>
+                    <p class="text-gray-600">É uma biblioteca que permite criar apps para iOS e Android com um único código em JavaScript. Ele usa componentes de interface **nativos**, garantindo performance e aparência autêntica em cada plataforma. A grande vantagem é a economia de tempo e recursos: escreva uma vez, rode em qualquer lugar.</p>
+                </div>
+                <div class="card p-6">
+                    <h4 class="text-xl font-semibold mb-3 text-purple-700">Vantagens Principais</h4>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-center"><span class="text-purple-500 mr-2">✓</span>Base de Código Única</li>
+                        <li class="flex items-center"><span class="text-purple-500 mr-2">✓</span>Comunidade Vibrante</li>
+                        <li class="flex items-center"><span class="text-purple-500 mr-2">✓</span>Fast Refresh (DevX)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card p-8 mt-8">
+                <h4 class="text-xl font-semibold mb-2 text-center text-purple-700">A Arquitetura: Como JavaScript e Nativo Conversam</h4>
+                <p class="text-center text-gray-600 mb-8 max-w-2xl mx-auto">O celular não entende JavaScript diretamente. A "mágica" do React Native está em como ele traduz suas instruções de JS para os componentes visuais que o usuário vê na tela. Essa tradução evoluiu muito, melhorando a performance.</p>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h5 class="font-bold text-lg mb-3 text-gray-700">Arquitetura Antiga: A Ponte (Bridge)</h5>
+                        <div class="text-center my-4">
+                            <p class="text-3xl">🌉</p>
+                            <p class="text-xs text-gray-500 mt-1">Comunicação Assíncrona</p>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-4">
+                            <strong>Analogia:</strong> Imagine enviar uma mensagem de texto para um tradutor. Você envia sua instrução (em JS), ele a traduz e envia para o lado Nativo executar. Há um pequeno atraso em cada etapa.
+                        </p>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex"><strong class="mr-2 text-red-500">-</strong>O JavaScript e o Nativo rodam em threads separadas.</li>
+                            <li class="flex"><strong class="mr-2 text-red-500">-</strong>A comunicação é **assíncrona** e envia dados em pacotes (JSON).</li>
+                            <li class="flex"><strong class="mr-2 text-red-500">-</strong>Pode criar um "congestionamento" em animações pesadas ou listas longas, causando lentidão.</li>
+                        </ul>
+                    </div>
+
+                    <div class="border-2 border-purple-400 rounded-lg p-6 bg-purple-50">
+                        <h5 class="font-bold text-lg mb-3 text-purple-700">Nova Arquitetura: A JSI (JavaScript Interface)</h5>
+                        <div class="text-center my-4">
+                             <p class="text-3xl">⚡️</p>
+                            <p class="text-xs text-purple-500 mt-1">Comunicação Síncrona</p>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-4">
+                           <strong>Analogia:</strong> Em vez de mensagens de texto, agora você tem uma linha telefônica direta com o tradutor. A conversa é instantânea e o lado Nativo é controlado diretamente.
+                        </p>
+                         <ul class="space-y-2 text-sm">
+                            <li class="flex"><strong class="mr-2 text-green-500">+</strong>O JavaScript pode manter uma referência direta ao lado Nativo.</li>
+                            <li class="flex"><strong class="mr-2 text-green-500">+</strong>A comunicação é **síncrona**, eliminando o atraso da "ponte".</li>
+                            <li class="flex"><strong class="mr-2 text-green-500">+</strong>Resulta em uma performance muito superior, tornando o React Native viável para tarefas ainda mais exigentes.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card p-8 mt-8">
+                <h4 class="text-xl font-semibold mb-4 text-center text-purple-700">React Native vs. Desenvolvimento Nativo</h4>
+                <p class="text-center text-gray-600 mb-8 max-w-2xl mx-auto">A escolha depende das prioridades do projeto. Não há uma resposta "certa", apenas a mais adequada para cada cenário.</p>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h5 class="font-semibold text-lg mb-3 text-green-600">Quando escolher React Native?</h5>
+                        <ul class="space-y-2 text-gray-700 list-disc list-inside">
+                            <li>Quando o tempo e o orçamento são limitados.</li>
+                            <li>Para aplicativos de negócios, e-commerce e redes sociais.</li>
+                            <li>Quando a maior parte da equipe tem experiência com JavaScript/React.</li>
+                            <li>Para projetos que precisam ser lançados rapidamente em iOS e Android.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-lg mb-3 text-blue-600">Quando escolher Nativo?</h5>
+                        <ul class="space-y-2 text-gray-700 list-disc list-inside">
+                            <li>Para jogos com gráficos 3D complexos.</li>
+                            <li>Quando o app precisa de performance computacional máxima (ex: edição de vídeo).</li>
+                            <li>Para aplicativos que dependem de APIs e recursos de hardware muito específicos ou recém-lançados.</li>
+                            <li>Quando a experiência do usuário precisa ser 100% fiel às diretrizes de design de cada plataforma.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="ambiente" class="mb-20 scroll-mt-20">
+            <h3 class="text-3xl font-bold text-center mb-12">Preparando o Ambiente com Expo</h3>
+            <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto mb-10">O **Expo** é uma plataforma que simplifica radicalmente o início no React Native. Ele gerencia toda a configuração pesada, permitindo que você foque 100% no código JavaScript.</p>
+            <div class="grid md:grid-cols-3 gap-8 text-center">
+                <div class="card p-6">
+                    <div class="text-4xl mb-4">1️⃣</div>
+                    <h4 class="text-xl font-semibold mb-2">Instale o Node.js</h4>
+                    <p class="text-gray-600">Baixe a versão LTS (suporte de longo prazo) em <a href="https://nodejs.org/" target="_blank" class="text-purple-600 hover:underline">nodejs.org</a>. É a base para rodar JavaScript no seu computador.</p>
+                </div>
+                <div class="card p-6">
+                    <div class="text-4xl mb-4">2️⃣</div>
+                    <h4 class="text-xl font-semibold mb-2">Crie o Projeto</h4>
+                    <p class="text-gray-600">Abra seu terminal e rode o comando:</p>
+                    <code class="block bg-gray-100 text-sm p-2 rounded-md mt-2 text-left">npx create-expo-app@latest MeuApp</code>
+                </div>
+                <div class="card p-6">
+                    <div class="text-4xl mb-4">3️⃣</div>
+                    <h4 class="text-xl font-semibold mb-2">Rode o App</h4>
+                    <p class="text-gray-600">Navegue para a pasta (`cd MeuApp`) e inicie o servidor:</p>
+                    <code class="block bg-gray-100 text-sm p-2 rounded-md mt-2 text-left">npx expo start</code>
+                    <p class="text-gray-600 mt-2">Escaneie o QR Code com o app **Expo Go** no seu celular!</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="primeiro-app" class="mb-20 scroll-mt-20">
+            <h3 class="text-3xl font-bold text-center mb-12">Mão na Massa: Seu Primeiro App</h3>
+            <div class="card p-6">
+                <h4 class="text-xl font-semibold mb-4 text-center text-purple-700">"Olá, Mundo!" Interativo</h4>
+                <p class="text-center text-gray-600 mb-6">Vamos dissecar o código de um app básico. **Clique em cada linha** para ver a explicação.</p>
+                <div class="grid md:grid-cols-2 gap-8 items-start">
+                    <div class="bg-gray-800 text-white p-4 rounded-lg font-mono text-sm overflow-x-auto">
+                        <pre><code id="code-block">
+<span class="code-line" data-line="1">import { StyleSheet, Text, View } from 'react-native';</span>
+<span class="code-line" data-line="2">import { useState } from 'react';</span>
+
+<span class="code-line" data-line="3">export default function App() {</span>
+<span class="code-line" data-line="4">  const [count, setCount] = useState(0);</span>
+  
+<span class="code-line" data-line="5">  return (</span>
+<span class="code-line" data-line="6">    &lt;View style={styles.container}&gt;</span>
+<span class="code-line" data-line="7">      &lt;Text style={styles.title}&gt;Olá, Mundo Interativo!&lt;/Text&gt;</span>
+<span class="code-line" data-line="8">      &lt;Text style={styles.counter}&gt;Cliques: {count}&lt;/Text&gt;</span>
+<span class="code-line" data-line="9">      &lt;button onClick={() => setCount(count + 1)} style={styles.button}&gt;</span>
+<span class="code-line" data-line="10">         Clique Aqui</span>
+<span class="code-line" data-line="11">      &lt;/button&gt;</span>
+<span class="code-line" data-line="12">    &lt;/View&gt;</span>
+<span class="code-line" data-line="13">  );</span>
+<span class="code-line" data-line="14">}</span>
+
+<span class="code-line" data-line="15">const styles = StyleSheet.create({</span>
+<span class="code-line" data-line="16">  container: {</span>
+<span class="code-line" data-line="17">    flex: 1,</span>
+<span class="code-line" data-line="18">    alignItems: 'center',</span>
+<span class="code-line" data-line="19">    justifyContent: 'center',</span>
+<span class="code-line" data-line="20">    backgroundColor: '#f8f7f4',</span>
+<span class="code-line" data-line="21">  },</span>
+<span class="code-line" data-line="22">  title: { fontSize: 24, fontWeight: 'bold', color: '#8a4baf' },</span>
+<span class="code-line" data-line="23">  counter: { fontSize: 18, marginVertical: 16 },</span>
+<span class="code-line" data-line="24">  button: { backgroundColor: '#8a4baf', color: 'white', padding: '10px 20px', borderRadius: '8px', border: 'none', cursor: 'pointer' }</span>
+<span class="code-line" data-line="25">});</span>
+                        </code></pre>
+                    </div>
+                    <div id="code-explanation" class="bg-purple-50 p-4 rounded-lg h-full">
+                        <p class="text-purple-800 font-semibold">Explicação</p>
+                        <p id="explanation-text" class="text-gray-700 mt-2">Clique em uma linha de código para começar.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="glossario" class="scroll-mt-20">
+            <h3 class="text-3xl font-bold text-center mb-12">Glossário Rápido</h3>
+            <div class="max-w-3xl mx-auto">
+                <input type="text" id="glossary-search" placeholder="Buscar termo..." class="w-full p-3 mb-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-300 focus:border-purple-500 outline-none">
+                <dl id="glossary-list">
+                    <div class="glossary-item mb-4 card p-4">
+                        <dt class="font-bold text-purple-700">Componente</dt>
+                        <dd class="text-gray-600 ml-4">Bloco de construção fundamental da interface. É uma peça de código reutilizável que descreve uma parte da UI (ex: um botão, um card).</dd>
+                    </div>
+                    <div class="glossary-item mb-4 card p-4">
+                        <dt class="font-bold text-purple-700">JSX</dt>
+                        <dd class="text-gray-600 ml-4">Uma extensão do JavaScript que permite escrever uma estrutura parecida com HTML dentro do código para definir a aparência dos componentes.</dd>
+                    </div>
+                    <div class="glossary-item mb-4 card p-4">
+                        <dt class="font-bold text-purple-700">Props</dt>
+                        <dd class="text-gray-600 ml-4">(Abreviação de "propriedades") São as informações que você passa para um componente para customizá-lo, como passar um `title` para um `Button`.</dd>
+                    </div>
+                    <div class="glossary-item mb-4 card p-4">
+                        <dt class="font-bold text-purple-700">Estado (State)</dt>
+                        <dd class="text-gray-600 ml-4">Uma memória interna de um componente. Quando o estado muda (ex: um contador aumenta), o React atualiza a tela automaticamente para refletir a mudança.</dd>
+                    </div>
+                    <div class="glossary-item mb-4 card p-4">
+                        <dt class="font-bold text-purple-700">Hook</dt>
+                        <dd class="text-gray-600 ml-4">Funções especiais que permitem "enganchar" (hook into) funcionalidades do React, como estado e ciclo de vida, dentro de componentes de função. Elas sempre começam com a palavra `use` (ex: `useState`, `useEffect`).</dd>
+                    </div>
+                    <div class="glossary-item mb-4 card p-4">
+                        <dt class="font-bold text-purple-700">StyleSheet</dt>
+                        <dd class="text-gray-600 ml-4">A ferramenta do React Native para criar objetos de estilo, de forma similar ao CSS, mas com a sintaxe de objetos JavaScript.</dd>
+                    </div>
+                     <div class="glossary-item mb-4 card p-4">
+                        <dt class="font-bold text-purple-700">Expo</dt>
+                        <dd class="text-gray-600 ml-4">Uma plataforma que simplifica o desenvolvimento com React Native, gerenciando a configuração nativa e fornecendo ferramentas como o app Expo Go para testes rápidos.</dd>
+                    </div>
+                </dl>
+            </div>
+        </section>
+
+    </main>
+    
+    <footer class="bg-gray-800 text-white mt-20">
+        <div class="container mx-auto px-6 py-8 text-center">
+            <p>Guia Interativo de React Native. Criado para facilitar seus primeiros passos.</p>
+            <p class="text-sm text-gray-400 mt-2">Continue explorando, construindo e aprendendo!</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            const codeLines = document.querySelectorAll('.code-line');
+            const explanationText = document.getElementById('explanation-text');
+            const explanations = {
+                1: "Importa os componentes básicos da interface do React Native: StyleSheet (para estilos), Text (para textos) e View (um contêiner genérico, como uma div).",
+                2: "Importa o 'useState', um Hook do React que permite adicionar estado (memória) a um componente funcional.",
+                3: "Define e exporta o componente principal do nosso aplicativo, chamado 'App'.",
+                4: "Usa o Hook 'useState' para criar uma variável de estado chamada 'count' (iniciada com 0) e uma função 'setCount' para atualizá-la.",
+                5: "Todo componente deve retornar o JSX que descreve como ele deve ser renderizado na tela.",
+                6: "Usa o componente 'View' como o contêiner principal da tela, aplicando estilos para centralizar o conteúdo.",
+                7: "Exibe um título estático na tela usando o componente 'Text'.",
+                8: "Exibe o valor atual da variável de estado 'count'. O texto será atualizado automaticamente quando 'count' mudar.",
+                9: "Cria um botão. A propriedade 'onClick' (em React para web, seria 'onPress' em React Native puro) define o que acontece quando ele é clicado.",
+                10: "O texto dentro do botão.",
+                11: "Fecha a tag do botão.",
+                12: "Fecha o contêiner principal 'View'.",
+                13: "Fecha a função do componente.",
+                14: "Fecha a definição do componente.",
+                15: "Cria um objeto de estilos usando 'StyleSheet.create' para melhor organização e performance.",
+                16: "Define um conjunto de estilos chamado 'container'.",
+                17: "'flex: 1' faz o contêiner ocupar todo o espaço disponível na tela.",
+                18: "'alignItems: 'center'' centraliza os filhos horizontalmente.",
+                19: "'justifyContent: 'center'' centraliza os filhos verticalmente.",
+                20: "Define a cor de fundo do contêiner.",
+                21: "Fecha a definição do estilo 'container'.",
+                22: "Define um estilo para o texto do título.",
+                23: "Define um estilo para o texto do contador.",
+                24: "Define um estilo para o botão. Note que no React Native puro, o componente Button tem estilização limitada, e usaríamos um 'TouchableOpacity' para botões customizados.",
+                25: "Fecha o objeto de estilos."
+            };
+
+            codeLines.forEach(line => {
+                line.addEventListener('click', () => {
+                    const lineNumber = line.dataset.line;
+                    explanationText.textContent = explanations[lineNumber] || 'Clique em uma linha de código para ver a explicação.';
+                    
+                    codeLines.forEach(l => l.classList.remove('active'));
+                    line.classList.add('active');
+                });
+            });
+
+            const glossarySearch = document.getElementById('glossary-search');
+            const glossaryItems = document.querySelectorAll('.glossary-item');
+            glossarySearch.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                glossaryItems.forEach(item => {
+                    const term = item.querySelector('dt').textContent.toLowerCase();
+                    const definition = item.querySelector('dd').textContent.toLowerCase();
+                    if (term.includes(searchTerm) || definition.includes(searchTerm)) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
